@@ -7,6 +7,47 @@
 #include "US_PositionNode.h"
 #include "FlyArea.generated.h"
 
+USTRUCT(BlueprintType)
+struct FNodeEdge
+{
+	GENERATED_BODY()
+	UPROPERTY()
+	int prevNodeNum;
+	UPROPERTY()
+	int nextNodeNum;
+	FNodeEdge()
+	{
+		
+	}
+	FNodeEdge(int a_prevNodeNum, int a_nextNodeNum)
+	{
+		prevNodeNum = a_prevNodeNum;
+		nextNodeNum = a_nextNodeNum;
+	}
+};
+
+USTRUCT(BlueprintType)
+struct FPositionNode
+{
+	GENERATED_BODY()
+	
+	UPROPERTY()
+	FVector location;
+	UPROPERTY()
+	bool isActive;
+	FPositionNode()
+	{
+		location.Zero();
+		isActive = true;
+	}
+	FPositionNode(FVector a_location, bool a_isActive)
+	{
+		location = a_location;
+		isActive = a_isActive;
+	}
+};
+
+
 UCLASS()
 class FLYINGAICPP_API AFlyArea : public AActor
 {
@@ -15,7 +56,7 @@ class FLYINGAICPP_API AFlyArea : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AFlyArea();
-	void SetMinMaxExtents(TArray<FVector> a_corners);
+	void SetMinMaxExtents();
 	void GetSpacingBetweenNodes();
 	void CreateNodesInFlyArea();
 	void CreateNavMesh();
@@ -34,7 +75,7 @@ private:
 	TArray<FVector> modeSpacing;
 	TArray<FVector> mextNodePosition;
 	UPROPERTY(EditAnywhere, Category= "Fly Area")
-	TArray<US_PositionNode*> nodeArray;
+	TArray<FPositionNode> nodeArray;
 
 	UPROPERTY(EditAnywhere, Category= "Fly Area")
 	FVector nodesRequiredForEachAxis;

@@ -1,10 +1,10 @@
 {
     "Version": "1.1",
     "Data": {
-        "Source": "d:\\personalprojects\\flyingaicpp\\plugins\\developer\\riderlink\\source\\rd\\thirdparty\\thirdparty.cpp",
+        "Source": "d:\\personalprojects\\flyingai_ue5\\flyingaicpp\\plugins\\developer\\riderlink\\source\\rd\\thirdparty\\thirdparty.cpp",
         "ProvidedModule": "",
         "Includes": [
-            "d:\\personalprojects\\flyingaicpp\\plugins\\developer\\riderlink\\intermediate\\build\\win64\\unrealeditor\\development\\rd\\definitions.h"
+            "d:\\personalprojects\\flyingai_ue5\\flyingaicpp\\plugins\\developer\\riderlink\\intermediate\\build\\win64\\unrealeditor\\development\\rd\\definitions.h"
         ],
         "ImportedModules": [],
         "ImportedHeaderUnits": []

@@ -11,12 +11,12 @@ AFlyArea::AFlyArea()
 
 }
 
-void AFlyArea::SetMinMaxExtents(TArray<FVector> a_corners)
+void AFlyArea::SetMinMaxExtents()
 {
 	maxExtents = GetActorLocation() + (flyZoneScale / 2);
-	a_corners.Add(maxExtents);
-	minExtents = (flyZoneScale / 2) - GetActorLocation();
-	a_corners.Add(minExtents);
+	corners.Add(maxExtents);
+	minExtents = ((flyZoneScale / 2) - GetActorLocation()) * -1;
+	corners.Add(minExtents);
 
 }
 
@@ -29,8 +29,8 @@ void AFlyArea::CreateNodesInFlyArea()
 {
 	while (nextNodePosition.X <= maxExtents.X)
 	{
-		US_PositionNode newPositionNode = US_PositionNode(nextNodePosition, true);
-		nodeArray.Add(&newPositionNode);
+		FPositionNode newPositionNode = FPositionNode(nextNodePosition, true);
+		nodeArray.Add(newPositionNode);
 
 		nextNodePosition.X += nodeSpacing.X;
 	}
@@ -52,7 +52,7 @@ void AFlyArea::CreateNavMesh()
 	nodeArray.Empty();
 	corners.Empty();
 
-	SetMinMaxExtents(corners);
+	SetMinMaxExtents();
 	GetSpacingBetweenNodes();
 
 	nextNodePosition = minExtents;
@@ -60,7 +60,7 @@ void AFlyArea::CreateNavMesh()
 
 	for (auto node : nodeArray)
 	{
-		DrawDebugBox(GetWorld(), node->position, FVector(30.0f, 30.0f, 30.0f), FColor::Blue, true);
+		DrawDebugBox(GetWorld(), node.location, FVector(30.0f, 30.0f, 30.0f), FColor::Blue, true);
 	}
 
 
@@ -72,16 +72,29 @@ void AFlyArea::CreateNavMesh()
 void AFlyArea::BeginPlay()
 {
 	Super::BeginPlay();
-
+	GetSpacingBetweenNodes();
+	SetMinMaxExtents();
+	nodeArray.Empty();
+	nextNodePosition = minExtents;
+	
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow,  FString::Printf(TEXT("Before"), GetWorld()->TimeSeconds));
+	CreateNodesInFlyArea();
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow,  FString::Printf(TEXT("After"), GetWorld()->TimeSeconds));
+	for (auto node : nodeArray)
+	{
+		DrawDebugCircle(GetWorld(), node.location, 20, 12, FColor::Red, false, 20);
+	}
 
 }
 
 void AFlyArea::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
+
+
 	nodeArray.Empty();
 	corners.Empty();
-	SetMinMaxExtents(corners);
+	SetMinMaxExtents();
 	
 	corners.Add(FVector(minExtents.X, maxExtents.Y, maxExtents.Z));
 	corners.Add(FVector(maxExtents.X, minExtents.Y, maxExtents.Z));
@@ -92,10 +105,8 @@ void AFlyArea::OnConstruction(const FTransform& Transform)
 
 	for (auto corner : corners)
 	{
-		DrawDebugSphere(GetWorld(), corner, 10, 12, FColor::Red, false, 20);
+		DrawDebugSphere(GetWorld(), corner, 20, 12, FColor::Red, false, 20);
 	}
-
-
 
 }
 // Called every frame
