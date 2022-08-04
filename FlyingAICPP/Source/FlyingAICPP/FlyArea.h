@@ -3,50 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "FlyNode.h"
 #include "GameFramework/Actor.h"
-#include "US_PositionNode.h"
 #include "FlyArea.generated.h"
-
-USTRUCT(BlueprintType)
-struct FNodeEdge
-{
-	GENERATED_BODY()
-	UPROPERTY()
-	int prevNodeNum;
-	UPROPERTY()
-	int nextNodeNum;
-	FNodeEdge()
-	{
-		
-	}
-	FNodeEdge(int a_prevNodeNum, int a_nextNodeNum)
-	{
-		prevNodeNum = a_prevNodeNum;
-		nextNodeNum = a_nextNodeNum;
-	}
-};
-
-USTRUCT(BlueprintType)
-struct FPositionNode
-{
-	GENERATED_BODY()
-	
-	UPROPERTY()
-	FVector location;
-	UPROPERTY()
-	bool isActive;
-	FPositionNode()
-	{
-		location.Zero();
-		isActive = true;
-	}
-	FPositionNode(FVector a_location, bool a_isActive)
-	{
-		location = a_location;
-		isActive = a_isActive;
-	}
-};
-
 
 UCLASS()
 class FLYINGAICPP_API AFlyArea : public AActor
@@ -60,6 +19,8 @@ public:
 	void GetSpacingBetweenNodes();
 	void CreateNodesInFlyArea();
 	void CreateNavMesh();
+	TArray<FNodeEdge*> FindNeighbourNodes(FFlyNode* nodeLocation);
+	void CreateNodeEdges();
 
 protected:
 	// Called when the game starts or when spawned
@@ -73,9 +34,10 @@ public:
 private:
 	TArray<FVector> corners;
 	TArray<FVector> modeSpacing;
-	TArray<FVector> mextNodePosition;
+	TArray<FVector> nextNodePosition;
+	
 	UPROPERTY(EditAnywhere, Category= "Fly Area")
-	TArray<FPositionNode> nodeArray;
+	TArray<FFlyNode> nodeArray;
 
 	UPROPERTY(EditAnywhere, Category= "Fly Area")
 	FVector nodesRequiredForEachAxis;
@@ -87,5 +49,7 @@ private:
 	UPROPERTY(EditAnywhere, Category= "Fly Area")
 	FVector flyZoneScale;
 	FVector nodeSpacing;
-	FVector nextNodePosition;
+	FVector nextNodeLocation;
+	FVector PosInArray = FVector(0,0,1);
+
 };

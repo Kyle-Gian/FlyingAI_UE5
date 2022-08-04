@@ -1,7 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "FlyArea.h"
+
 
 // Sets default values
 AFlyArea::AFlyArea()
@@ -27,23 +26,26 @@ void AFlyArea::GetSpacingBetweenNodes()
 
 void AFlyArea::CreateNodesInFlyArea()
 {
-	while (nextNodePosition.X <= maxExtents.X)
+	
+	while (nextNodeLocation.X <= maxExtents.X)
 	{
-		FPositionNode newPositionNode = FPositionNode(nextNodePosition, true);
+		FFlyNode newPositionNode = FFlyNode(nextNodeLocation, true, PosInArray);
 		nodeArray.Add(newPositionNode);
-
-		nextNodePosition.X += nodeSpacing.X;
+		PosInArray.X += 1;
+		nextNodeLocation.X += nodeSpacing.X;
 	}
 
-	nextNodePosition = FVector(minExtents.X, nextNodePosition.Y + nodeSpacing.Y, nextNodePosition.Z);
+	nextNodeLocation = FVector(minExtents.X, nextNodeLocation.Y + nodeSpacing.Y, nextNodeLocation.Z);
+	PosInArray = FVector(0, PosInArray.Y + 1, PosInArray.Z);
 
-	if (nextNodePosition.Y <= maxExtents.Y)
+	if (nextNodeLocation.Y <= maxExtents.Y)
 		CreateNodesInFlyArea();
 
 
-	nextNodePosition = FVector(minExtents.X, minExtents.Y, nextNodePosition.Z + nodeSpacing.Z);
+	nextNodeLocation = FVector(minExtents.X, minExtents.Y, nextNodeLocation.Z + nodeSpacing.Z);
+	PosInArray = FVector(0, 0, PosInArray.Z + 1);
 
-	if (nextNodePosition.Z <= maxExtents.Z)
+	if (nextNodeLocation.Z <= maxExtents.Z)
 		CreateNodesInFlyArea();
 }
 
@@ -55,17 +57,27 @@ void AFlyArea::CreateNavMesh()
 	SetMinMaxExtents();
 	GetSpacingBetweenNodes();
 
-	nextNodePosition = minExtents;
+	nextNodeLocation = minExtents;
 	CreateNodesInFlyArea();
 
 	for (auto node : nodeArray)
 	{
 		DrawDebugBox(GetWorld(), node.location, FVector(30.0f, 30.0f, 30.0f), FColor::Blue, true);
 	}
-
-
 }
 
+TArray<FNodeEdge*> AFlyArea::FindNeighbourNodes(FFlyNode* node)
+{
+	return TArray<FNodeEdge*>();
+}
+
+void AFlyArea::CreateNodeEdges()
+{
+	for (auto node : nodeArray)
+	{
+		//node.edges = FindNeighbourNodes(&node);
+	}
+}
 
 
 // Called when the game starts or when spawned
@@ -75,7 +87,7 @@ void AFlyArea::BeginPlay()
 	GetSpacingBetweenNodes();
 	SetMinMaxExtents();
 	nodeArray.Empty();
-	nextNodePosition = minExtents;
+	nextNodeLocation = minExtents;
 	
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow,  FString::Printf(TEXT("Before"), GetWorld()->TimeSeconds));
 	CreateNodesInFlyArea();
