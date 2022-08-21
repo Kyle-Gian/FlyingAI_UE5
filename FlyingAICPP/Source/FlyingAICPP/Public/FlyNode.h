@@ -15,36 +15,37 @@ struct FFlyNode
 	GENERATED_BODY()
 
 	UPROPERTY(VisibleAnywhere)
-	FVector location;
+	FVector worldLocation;
 	UPROPERTY()
 	bool isActive;
 	UPROPERTY(VisibleAnywhere)
-	FVector positionInArray;
+	FVector positionInGrid;
 
 	TArray<FNodeEdge*> edges;
 	
 	FFlyNode()
 	{
-		location.Zero();
+		worldLocation.Zero();
 		isActive = true;
 	}
 
 	FFlyNode(FVector a_location, bool a_isActive)
 	{
-		location = a_location;
+		worldLocation = a_location;
 		isActive = a_isActive;
 	}
 
 	FFlyNode(FVector a_location, bool a_isActive, FVector a_posInArray)
 	{
-		location = a_location;
+		worldLocation = a_location;
 		isActive = a_isActive;
-		positionInArray = a_posInArray;
+		positionInGrid = a_posInArray;
 	}
 
-	FORCEINLINE int GetNodePositionInArray() const
+	FORCEINLINE int GetNodePositionInArray(int a_width, int a_depth) const
 	{
-		return (positionInArray.X + positionInArray.Y) * positionInArray.Z;
+		//X+(S*Y)+((S*S)*Z)
+		return positionInGrid.X + (a_width * positionInGrid.Y)  + ((a_depth * a_depth) * positionInGrid.Z);
 	}
 	
 };

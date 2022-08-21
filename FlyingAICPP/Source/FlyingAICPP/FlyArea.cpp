@@ -44,7 +44,7 @@ void AFlyArea::CreateNodesInFlyArea()
 
 	nextNodeLocation = FVector(minExtents.X, minExtents.Y, nextNodeLocation.Z + nodeSpacing.Z);
 	PosInArray = FVector(0, 0, PosInArray.Z + 1);
-
+	
 	if (nextNodeLocation.Z <= maxExtents.Z)
 		CreateNodesInFlyArea();
 }
@@ -62,12 +62,13 @@ void AFlyArea::CreateNavMesh()
 
 	for (auto node : nodeArray)
 	{
-		DrawDebugBox(GetWorld(), node.location, FVector(30.0f, 30.0f, 30.0f), FColor::Blue, true);
+		DrawDebugBox(GetWorld(), node.worldLocation, FVector(30.0f, 30.0f, 30.0f), FColor::Blue, true);
 	}
 }
 
 TArray<FNodeEdge*> AFlyArea::FindNeighbourNodes(FFlyNode* node)
 {
+	FVector posToCheck = FVector(node->positionInGrid.X, node->positionInGrid.Y, node->positionInGrid.Z);
 	return TArray<FNodeEdge*>();
 }
 
@@ -94,7 +95,7 @@ void AFlyArea::BeginPlay()
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow,  FString::Printf(TEXT("After"), GetWorld()->TimeSeconds));
 	for (auto node : nodeArray)
 	{
-		DrawDebugCircle(GetWorld(), node.location, 20, 12, FColor::Red, false, 20);
+		DrawDebugCircle(GetWorld(), node.worldLocation, 20, 12, FColor::Red, false, 20);
 	}
 
 }

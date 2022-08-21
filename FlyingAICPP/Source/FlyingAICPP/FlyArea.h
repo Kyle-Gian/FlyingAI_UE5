@@ -50,6 +50,7 @@ private:
 	FVector flyZoneScale;
 	FVector nodeSpacing;
 	FVector nextNodeLocation;
-	FVector PosInArray = FVector(0,0,1);
+	int ZTierMultiplier = 0;
+	FVector PosInArray = FVector(0,0,0);
 
 };
